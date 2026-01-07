@@ -4548,6 +4548,8 @@ _poller_reset_failed_recvs(struct spdk_nvmf_rdma_poller *rpoller, struct ibv_rec
 	SPDK_ERRLOG("Failed to post a recv for the poller %p with errno %d\n", rpoller, -rc);
 	while (bad_recv_wr != NULL) {
 		bad_rdma_wr = (struct spdk_nvmf_rdma_wr *)bad_recv_wr->wr_id;
+        SPDK_ERRLOG("LeiTest: RDMA_IBV work request, id: %u\n", wc[i].wr_id);
+
 		rdma_recv = SPDK_CONTAINEROF(bad_rdma_wr, struct spdk_nvmf_rdma_recv, rdma_wr);
 
 		rdma_recv->qpair->current_recv_depth++;

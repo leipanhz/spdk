@@ -23,7 +23,7 @@
 #include "spdk/config.h"
 #include "event_internal.h"
 
-#define SPDK_APP_DEFAULT_LOG_LEVEL		SPDK_LOG_NOTICE
+#define SPDK_APP_DEFAULT_LOG_LEVEL		SPDK_LOG_DEBUG //LeiTest: SPDK_LOG_NOTICE
 #define SPDK_APP_DEFAULT_LOG_PRINT_LEVEL	SPDK_LOG_INFO
 #define SPDK_APP_DEFAULT_NUM_TRACE_ENTRIES	SPDK_DEFAULT_NUM_TRACE_ENTRIES
 
@@ -900,7 +900,7 @@ spdk_app_start(struct spdk_app_opts *opts_user, spdk_msg_fn start_fn,
 	}
 
 	tty = ttyname(STDERR_FILENO);
-	if (opts->print_level > SPDK_LOG_WARN &&
+	if (opts->print_level > SPDK_LOG_DEBUG &&
 	    isatty(STDERR_FILENO) &&
 	    tty &&
 	    !strncmp(tty, "/dev/tty", strlen("/dev/tty"))) {
