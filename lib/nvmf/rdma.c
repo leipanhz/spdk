@@ -4548,8 +4548,6 @@ _poller_reset_failed_recvs(struct spdk_nvmf_rdma_poller *rpoller, struct ibv_rec
 	SPDK_ERRLOG("Failed to post a recv for the poller %p with errno %d\n", rpoller, -rc);
 	while (bad_recv_wr != NULL) {
 		bad_rdma_wr = (struct spdk_nvmf_rdma_wr *)bad_recv_wr->wr_id;
-        SPDK_ERRLOG("LeiTest: RDMA_IBV work request, id: %u\n", wc[i].wr_id);
-
 		rdma_recv = SPDK_CONTAINEROF(bad_rdma_wr, struct spdk_nvmf_rdma_recv, rdma_wr);
 
 		rdma_recv->qpair->current_recv_depth++;
@@ -4754,6 +4752,7 @@ nvmf_rdma_poller_poll(struct spdk_nvmf_rdma_transport *rtransport,
 	for (i = 0; i < reaped; i++) {
 
 		rdma_wr = (struct spdk_nvmf_rdma_wr *)wc[i].wr_id;
+    	//SPDK_ERRLOG("**** LeiTest: RDMA_IBV work request type: %d, id: %lu, count: %d\n", rdma_wr->type, wc[i].wr_id, count);
 
 		switch (rdma_wr->type) {
 		case RDMA_WR_TYPE_SEND:
@@ -4820,6 +4819,7 @@ nvmf_rdma_poller_poll(struct spdk_nvmf_rdma_transport *rtransport,
 		case RDMA_WR_TYPE_DATA:
 			rdma_req = SPDK_CONTAINEROF(rdma_wr, struct spdk_nvmf_rdma_request, data_wr);
 			rqpair = SPDK_CONTAINEROF(rdma_req->req.qpair, struct spdk_nvmf_rdma_qpair, qpair);
+        	//SPDK_ERRLOG("**** LeiTest: RDMA_IBV work request type: RDMA_WR_TYPE_DATA, id: %lu\n", wc[i].wr_id);
 
 			assert(rdma_req->num_outstanding_data_wr > 0);
 
