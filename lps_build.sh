@@ -3,5 +3,7 @@
 sudo scripts/pkgdep.sh --rdma
 ./configure --with-rdma
 make
-sudo build/bin/nvmf_tgt
+
+echo "make is complete, run build/bin/nvmf_tgt with needed arguments to start"
+#sudo build/bin/nvmf_tgt
 
