@@ -17,6 +17,7 @@
 #include "spdk_internal/usdt.h"
 
 #include "nvmf_internal.h"
+#include "nvmf_trace.h"
 #include "transport.h"
 
 SPDK_LOG_REGISTER_COMPONENT(nvmf)
@@ -580,6 +581,11 @@ spdk_nvmf_tgt_create(struct spdk_nvmf_target_opts *_opts)
 
 	TAILQ_INSERT_HEAD(&g_nvmf_tgts, tgt, link);
 
+	/* Initialize trace system */
+	if (nvmf_trace_init("/var/log/spdk_nvmf_trace.log") != 0) {
+		SPDK_WARNLOG("Failed to initialize trace system\n");
+	}
+
 	return tgt;
 }
 
@@ -596,6 +602,9 @@ _nvmf_tgt_destroy_next_transport(void *ctx)
 	} else {
 		spdk_nvmf_tgt_destroy_done_fn *destroy_cb_fn = tgt->destroy_cb_fn;
 		void *destroy_cb_arg = tgt->destroy_cb_arg;
+
+		/* Shutdown trace system */
+		nvmf_trace_fini();
 
 		pthread_mutex_destroy(&tgt->mutex);
 		free(tgt);

@@ -114,6 +114,10 @@ DEFINE_STUB(nvmf_subsystem_find_listener,
 
 DEFINE_STUB(nvmf_subsystem_listener_is_active, bool,
 	    (const struct spdk_nvmf_subsystem_listener *listener), true);
+DEFINE_STUB_V(nvmf_trace_record,
+	      (uint32_t event_type, uint64_t request_id, uint32_t qpair_id,
+	       uint32_t nsid, uint32_t opcode, uint32_t status));
+
 
 DEFINE_STUB(nvmf_bdev_ctrlr_read_cmd,
 	    int,

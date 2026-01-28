@@ -9,6 +9,7 @@
 #include "spdk/stdinc.h"
 
 #include "nvmf_internal.h"
+#include "nvmf_trace.h"
 #include "transport.h"
 
 #include "spdk/bdev.h"
@@ -5186,6 +5187,14 @@ _nvmf_request_complete(void *ctx)
 	opcode = req->cmd->nvmf_cmd.opcode;
 	qpair = req->qpair;
 
+	/* Trace request completion */
+	nvmf_trace_record(NVMF_TRACE_EVENT_REQUEST_COMPLETED,
+			  (uint64_t)req,
+			  qpair->qid,
+			  req->cmd->nvme_cmd.nsid,
+			  opcode,
+			  rsp->status.sc | (rsp->status.sct << 8));
+
 	/* request should not be on a ns reservations list */
 	assert(req->reservation_queued == false);
 
@@ -5322,6 +5331,14 @@ int
 spdk_nvmf_request_complete(struct spdk_nvmf_request *req)
 {
 	struct spdk_nvmf_qpair *qpair = req->qpair;
+
+	/* Trace request entering completion path */
+	nvmf_trace_record(NVMF_TRACE_EVENT_REQUEST_EXECUTING,
+			  (uint64_t)req,
+			  qpair->qid,
+			  req->cmd->nvme_cmd.nsid,
+			  req->cmd->nvmf_cmd.opcode,
+			  0);
 
 	spdk_thread_exec_msg(qpair->group->thread, _nvmf_request_complete, req);
 

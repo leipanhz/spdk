@@ -7,6 +7,7 @@
 #include "spdk/stdinc.h"
 
 #include "nvmf_internal.h"
+#include "nvmf_trace.h"
 
 #include "spdk/bdev.h"
 #include "spdk/endian.h"
@@ -74,6 +75,14 @@ nvmf_bdev_ctrlr_complete_cmd(struct spdk_bdev_io *bdev_io, bool success,
 	struct spdk_nvme_cpl		*response = &req->rsp->nvme_cpl;
 	int				sc = 0, sct = 0;
 	uint32_t			cdw0 = 0;
+
+	/* Trace bdev I/O completion */
+	nvmf_trace_record(NVMF_TRACE_EVENT_BDEV_IO_COMPLETE,
+			  (uint64_t)req,
+			  req->qpair->qid,
+			  req->cmd->nvme_cmd.nsid,
+			  req->cmd->nvmf_cmd.opcode,
+			  success ? 0 : 1);
 
 	if (spdk_unlikely(req->first_fused)) {
 		struct spdk_nvmf_request	*first_req = req->first_fused_req;
@@ -421,6 +430,14 @@ nvmf_bdev_ctrlr_read_cmd(struct spdk_bdev *bdev, struct spdk_bdev_desc *desc,
 
 	assert(!spdk_nvmf_request_using_zcopy(req));
 
+	/* Trace bdev I/O submission */
+	nvmf_trace_record(NVMF_TRACE_EVENT_BDEV_IO_SUBMIT,
+			  (uint64_t)req,
+			  req->qpair->qid,
+			  cmd->nsid,
+			  cmd->opc,
+			  0);
+
 	rc = spdk_bdev_readv_blocks_ext(desc, ch, req->iov, req->iovcnt, start_lba, num_blocks,
 					nvmf_bdev_ctrlr_complete_cmd, req, &opts);
 	if (spdk_unlikely(rc)) {
@@ -473,6 +490,14 @@ nvmf_bdev_ctrlr_write_cmd(struct spdk_bdev *bdev, struct spdk_bdev_desc *desc,
 	}
 
 	assert(!spdk_nvmf_request_using_zcopy(req));
+
+	/* Trace bdev I/O submission */
+	nvmf_trace_record(NVMF_TRACE_EVENT_BDEV_IO_SUBMIT,
+			  (uint64_t)req,
+			  req->qpair->qid,
+			  cmd->nsid,
+			  cmd->opc,
+			  0);
 
 	rc = spdk_bdev_writev_blocks_ext(desc, ch, req->iov, req->iovcnt, start_lba, num_blocks,
 					 nvmf_bdev_ctrlr_complete_cmd, req, &opts);

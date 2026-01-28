@@ -17,6 +17,10 @@
 
 SPDK_LOG_REGISTER_COMPONENT(nvmf)
 
+DEFINE_STUB_V(nvmf_trace_record,
+	      (uint32_t event_type, uint64_t request_id, uint32_t qpair_id,
+	       uint32_t nsid, uint32_t opcode, uint32_t status));
+
 DEFINE_STUB(spdk_nvmf_request_complete, int, (struct spdk_nvmf_request *req), -1);
 
 DEFINE_STUB(spdk_bdev_get_name, const char *, (const struct spdk_bdev *bdev), "test");

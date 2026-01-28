@@ -97,6 +97,10 @@ DEFINE_STUB(spdk_nvmf_subsystem_host_allowed,
 	    bool,
 	    (struct spdk_nvmf_subsystem *subsystem, const char *hostnqn),
 	    true);
+DEFINE_STUB_V(nvmf_trace_record,
+	      (uint32_t event_type, uint64_t request_id, uint32_t qpair_id,
+	       uint32_t nsid, uint32_t opcode, uint32_t status));
+
 
 DEFINE_STUB(nvmf_ctrlr_dsm_supported,
 	    bool,
