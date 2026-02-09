@@ -19,7 +19,8 @@ sleep 5;
 read -p "Press Enter to continue  \n" </dev/tty
 
 
-for i in {0..15}; do sudo ./scripts/rpc.py bdev_aio_create /dev/nvme${i}n1 aio${i} 4096; sleep 2; done
+# for i in {0..15}; do sudo ./scripts/rpc.py bdev_aio_create /dev/nvme${i}n1 aio${i} 4096; sleep 2; done
+for i in {0..15}; do sudo ./scripts/rpc.py bdev_aio_create /dev/nvme${i}n1 aio${i} 512; sleep 2; done
 
 sudo scripts/rpc.py nvmf_create_transport -t RDMA -u 8192 -i 131072 -c 8192
 sudo scripts/rpc.py nvmf_get_transports
@@ -39,8 +40,8 @@ sudo scripts/rpc.py nvmf_get_subsystems | less
 sudo scripts/rpc.py bdev_nvme_get_controllers | less
 
 read -p "Press Enter to add listener" </dev/tty
-#sudo scripts/rpc.py nvmf_subsystem_add_listener  $NQN -t rdma -a 10.243.3.20 -s 4420
-sudo scripts/rpc.py nvmf_subsystem_add_listener  $NQN -t rdma -a 10.243.3.20 -s 4421
+sudo scripts/rpc.py nvmf_subsystem_add_listener  $NQN -t rdma -a 10.243.3.20 -s 4420
+#sudo scripts/rpc.py nvmf_subsystem_add_listener  $NQN -t rdma -a 10.243.3.20 -s 4421
 
 read -p "Press Enter to save config, otherwise ctrl+C to exit" </dev/tty
 sudo scripts/rpc.py save_config > ~/Config/spdk/spdk_config_0123_16ssd_aio.json
